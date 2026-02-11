@@ -3,51 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Puzzle For You</title>
+    <title>A Puzzle for My Valentine</title>
     <style>
         :root {
-            --green: #6aaa64;
-            --yellow: #c9b458;
-            --gray: #787c7e;
-            --black: #121213;
+            --correct: #4caf50;
+            --present: #ffc107;
+            --absent: rgba(255, 255, 255, 0.2);
         }
-        body { background-color: #fdf2f2; font-family: 'Helvetica Neue', Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        h1 { color: #d32f2f; margin-bottom: 20px; }
-        #game-board { display: grid; grid-template-rows: repeat(6, 1fr); grid-gap: 5px; margin-bottom: 20px; }
-        .row { display: grid; grid-template-columns: repeat(5, 1fr); grid-gap: 5px; }
-        .tile { width: 50px; height: 50px; border: 2px solid #d8d8d8; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; text-transform: uppercase; background: white; }
-        .correct { background-color: var(--green) !important; color: white; border-color: var(--green); }
-        .present { background-color: var(--yellow) !important; color: white; border-color: var(--yellow); }
-        .absent { background-color: var(--gray) !important; color: white; border-color: var(--gray); }
-        #message-area { height: 30px; color: #d32f2f; font-weight: bold; margin-bottom: 10px; }
-        #love-note { display: none; text-align: center; max-width: 400px; animation: fadeIn 2s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        input { position: absolute; opacity: 0; }
+        body { 
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 { font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-align: center; }
+        .intro-text { text-align: center; margin-bottom: 20px; opacity: 0.9; max-width: 300px; }
+
+        #game-board { display: grid; grid-template-rows: repeat(6, 1fr); grid-gap: 8px; margin-bottom: 20px; }
+        .row { display: grid; grid-template-columns: repeat(5, 1fr); grid-gap: 8px; }
+        .tile { 
+            width: 50px; height: 50px; 
+            border: 2px solid rgba(255, 255, 255, 0.5); 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 24px; font-weight: bold; text-transform: uppercase; 
+            border-radius: 8px;
+        }
+        .correct { background-color: var(--correct) !important; border-color: var(--correct); }
+        .present { background-color: var(--present) !important; border-color: var(--present); }
+        .absent { background-color: var(--absent) !important; border-color: transparent; }
+
+        .input-area { margin-bottom: 20px; }
+        #word-input { 
+            padding: 12px; border-radius: 25px; border: none; font-size: 16px; 
+            text-align: center; width: 180px; text-transform: uppercase;
+            outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        button { 
+            padding: 10px 20px; border-radius: 25px; border: none; 
+            background: white; color: #ff416c; font-weight: bold; cursor: pointer;
+            margin-top: 10px; transition: transform 0.2s;
+        }
+        button:active { transform: scale(0.95); }
+        
+        #hint-btn { background: transparent; border: 1px solid white; color: white; font-size: 0.8rem; margin-top: 15px; }
+
+        #love-note { display: none; text-align: center; animation: fadeIn 1.5s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <h1>Guess the Secret Word ❤️</h1>
-    <div id="message-area"></div>
-    <div id="game-board"></div>
-    
-    <input type="text" id="ghost-input" autofocus>
+    <div id="game-container" style="display: flex; flex-direction: column; align-items: center;">
+        <h1>Valentine Wordle ❤️</h1>
+        <p class="intro-text">Guess the secret 5-letter word that describes us!</p>
+        
+        <div id="game-board"></div>
+
+        <div class="input-area">
+            <input type="text" id="word-input" maxlength="5" placeholder="Type here..." autocomplete="off">
+            <button onclick="submitGuess()">Submit Guess</button>
+        </div>
+
+        <button id="hint-btn" onclick="showHint()">Need a hint?</button>
+        <p id="hint-text" style="display:none; margin-top:10px; font-style: italic;">It's something you have given to me completely...</p>
+    </div>
 
     <div id="love-note">
-        <h2>You Got It! 🎉</h2>
-        <p>Just like this game, my life was missing a few pieces until I found you. You're my 1-in-a-million.</p>
-        <p><strong>I love you! Happy Valentine's Day!</strong></p>
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eXp6ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/KztT2c4u8mYYUiMKdJ/giphy.gif" width="250">
+        <h1>Correct! 🎉</h1>
+        <p style="font-size: 1.2rem;">My HEART belongs to you forever.</p>
+        <p>I am the luckiest person to have you as my fiancé.</p>
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eXp6ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4ZzR4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/KztT2c4u8mYYUiMKdJ/giphy.gif" width="250" style="border-radius: 15px;">
     </div>
 
     <script>
-        const SECRET_WORD = "HEART"; // <--- CHANGE YOUR 5-LETTER WORD HERE
+        const SECRET_WORD = "HEART"; 
         let currentAttempt = 0;
-        let currentTile = 0;
-        let guesses = ["", "", "", "", "", ""];
         const board = document.getElementById('game-board');
+        const input = document.getElementById('word-input');
 
-        // Initialize board
+        // Build the board
         for (let i = 0; i < 6; i++) {
             let row = document.createElement('div');
             row.className = 'row';
@@ -60,42 +101,20 @@
             board.appendChild(row);
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (currentAttempt >= 6) return;
-            
-            if (e.key === 'Enter') {
-                submitGuess();
-            } else if (e.key === 'Backspace') {
-                guesses[currentAttempt] = guesses[currentAttempt].slice(0, -1);
-                updateBoard();
-            } else if (guesses[currentAttempt].length < 5 && e.key.match(/^[a-z]$/i)) {
-                guesses[currentAttempt] += e.key.toUpperCase();
-                updateBoard();
-            }
-        });
-
-        function updateBoard() {
-            for (let j = 0; j < 5; j++) {
-                const tile = document.getElementById(`tile-${currentAttempt}-${j}`);
-                tile.innerText = guesses[currentAttempt][j] || "";
-            }
-        }
-
         function submitGuess() {
-            const guess = guesses[currentAttempt];
+            const guess = input.value.toUpperCase();
             if (guess.length !== 5) {
-                document.getElementById('message-area').innerText = "Must be 5 letters!";
+                alert("Please enter a 5-letter word!");
                 return;
             }
 
-            const row = currentAttempt;
             for (let i = 0; i < 5; i++) {
-                const tile = document.getElementById(`tile-${row}-${i}`);
-                const letter = guess[i];
+                const tile = document.getElementById(`tile-${currentAttempt}-${i}`);
+                tile.innerText = guess[i];
                 
-                if (letter === SECRET_WORD[i]) {
+                if (guess[i] === SECRET_WORD[i]) {
                     tile.classList.add('correct');
-                } else if (SECRET_WORD.includes(letter)) {
+                } else if (SECRET_WORD.includes(guess[i])) {
                     tile.classList.add('present');
                 } else {
                     tile.classList.add('absent');
@@ -103,15 +122,22 @@
             }
 
             if (guess === SECRET_WORD) {
-                document.getElementById('message-area').innerText = "";
-                document.getElementById('game-board').style.display = 'none';
-                document.getElementById('love-note').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('game-container').style.display = 'none';
+                    document.getElementById('love-note').style.display = 'block';
+                }, 500);
             } else {
                 currentAttempt++;
+                input.value = "";
                 if (currentAttempt === 6) {
-                    document.getElementById('message-area').innerText = "Almost! The word was " + SECRET_WORD;
+                    alert("Oh no! The word was " + SECRET_WORD + ". Refresh to try again!");
                 }
             }
+        }
+
+        function showHint() {
+            document.getElementById('hint-text').style.display = 'block';
+            document.getElementById('hint-btn').style.display = 'none';
         }
     </script>
 </body>
